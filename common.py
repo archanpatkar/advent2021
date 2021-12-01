@@ -3,11 +3,11 @@ from functools import *
 from collections import *
 from math import *
 from itertools import *
-from graphviz import Graph, Digraph
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
-import seaborn as sns; sns.set_theme()
+# from graphviz import Graph, Digraph
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
+# import numpy as np
+# import seaborn as sns; sns.set_theme()
 
 def scatter3d(x,y,z,name,xl="X",yl="Y",zl="Z"):
     fig = plt.figure()
