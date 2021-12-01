@@ -12,9 +12,9 @@ data = fnl(parse)
 total = 0
 lastsum = 0
 for i in range(len(data)-2):
-    print(data[i:i+3])
+    # print(data[i:i+3])
     currsum = sum(data[i:i+3])
-    print(currsum)
+    # print(currsum)
     if (i != 0) and lastsum < currsum:
         total += 1
     lastsum = currsum
