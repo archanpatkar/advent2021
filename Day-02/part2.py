@@ -3,10 +3,8 @@ sys.path.append("..")
 from common import *
 
 def parse(d):
-    if(len(d)> 0):
-        temp = d.split(" ")
-        return (temp[0],int(temp[1]))
-    return ("",0)
+    temp = d.split(" ")
+    return (temp[0],int(temp[1]))
 
 data = fnl(parse)
 
