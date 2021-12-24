@@ -3,11 +3,11 @@ from functools import *
 from collections import *
 from math import *
 from itertools import *
-# from graphviz import Graph, Digraph
-# import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axes3D
-# import numpy as np
-# import seaborn as sns; sns.set_theme()
+from graphviz import Graph, Digraph
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+import seaborn as sns; sns.set_theme()
 
 def scatter3d(x,y,z,name,xl="X",yl="Y",zl="Z"):
     fig = plt.figure()
@@ -77,13 +77,15 @@ def periodic(data,pd=lambda x:not len(x),sep="\n",app=" "):
     return u
 
 def freq(str):
-    l = {}
+    l = defaultdict(int)
     for c in str: 
         if c in l: l[c] += 1
         else: l[c] = 1
     return l
 
 point = namedtuple("Point2D",["x", "y"]);
+point3d = namedtuple("Point3D",["x", "y", "z"]);
+
 
 UP = (0,-1)
 DOWN = (0,1)
@@ -102,24 +104,26 @@ n4l = [
 
 n8l = [
     (-1,-1), UP,  (1,-1), 
-    LEFT,         RIGHT, 
+    LEFT,   (0,0) ,  RIGHT, 
     (-1,1), DOWN, (1,1)
 ]
 
-ng = lambda ns: lambda p: tuple((point(p.x+d[0],p.y+d[1]) for d in ns))
+# ng = lambda ns: lambda p: tuple((point(p.x+d[0],p.y+d[1]) for d in ns))
+ng = lambda ns: lambda p: tuple(((p[0]+d[0],p[1]+d[1]) for d in ns))
+
 n4 = ng(n4l)
 n8 = ng(n8l)
 
-def drawgrid(points,xs,ys,pc="*",em=".",jo="\n"):
-    strmap = []
-    for y in range(ys):
-        cr = []
-        for x in range(xs):
-            if (x,y) in points:
-                cr.append(pc)
-            else: cr.append(em)
-        strmap.append(cr)
-    return strmap.join(jo)
+# def drawgrid(points,xs,ys,pc="*",em=".",jo="\n"):
+#     strmap = []
+#     for y in range(ys):
+#         cr = []
+#         for x in range(xs):
+#             if (x,y) in points:
+#                 cr.append(pc)
+#             else: cr.append(em)
+#         strmap.append(jo.join(cr))
+#     return jo.join(strmap)
 
 def eucdis(p1,p2):
     return sqrt(((p2.x-p1.x) ** 2) + ((p2.y-p1.y) ** 2))
@@ -127,8 +131,11 @@ def eucdis(p1,p2):
 def chebdis(p1,p2):
     return max(abs(p2.x-p1.x),abs(p2.y-p1.y))
 
-def manhdis(p1,p2):
+def manhdis2(p1,p2):
     return abs(p1.x-p2.x) + abs(p1.y-p2.y)
+
+def manhdis(p1,p2):
+    return abs(p1[0]-p2[0]) + abs(p1[1]-p2[1])
 
 def a(list,index):
     if index < len(list): return list[index]
@@ -232,54 +239,6 @@ def crt(l):
     x = [l[i][0]*y[i]*z[i] for i in range(k)]
     return (add(x)%N,N)
 
-def unionfind(*lists):
-    ss = enumerate(map(lambda l: set(l),lists))
-    ops = map(lambda p: set(map(lambda e: (e,p[0]),p[1])), ss)
-    return reduce(lambda acc,v: acc.union(v),ops,set())
-    
-def bfs(graph,start):
-    visited = {start:0}
-    parents = {start:-1}
-    q = [start]
-    while len(q) != 0:
-        curr = q.pop(0)
-        p(curr)
-        for adj in graph.get(curr):
-            if not(adj in visited):
-                q.append(adj);
-                visited[adj] = visited[curr] + 1
-                parents[adj] = curr
-    return (visited,parents)
-
-def dfs(graph,start,cb=lambda p,c:(p,c),visited={}):
-    visited[start] = 1
-    for adj in graph[start]:
-        if not visited.get(adj):
-            cb(start,adj)
-            dfs(graph,adj,cb,visited)
-
-# shortest path bfs
-def spbfs(graph,start,end):
-    visited, parents = bfs(graph,start)
-    if(end in visited):
-        path = []
-        curr = end
-        while curr != start:
-            path.append(curr)
-            curr = parents[curr]
-        path.append(start)
-        path.reverse()
-        return path
-    print("No path!")
-
-def toposort(graph):
-    visited = {}
-    ts = []
-    for n in graph:
-        if not(n in visited):
-            dfs(graph,n,lambda p,c:ts.append((p,c)),visited)
-    return ts
-
 def drawGraph(path,graph,process=iden,format="svg"):
     g = Graph(format=format,name=path)
     for n in graph:
@@ -326,8 +285,8 @@ def all_poss_var(l,marker,values):
         if l[e] == marker: d[e] = values
     return comb(list(l),d,list(d.keys())[0])
     
-def aoci(func=iden):
-    return func(open("input.txt","r").read());
+def aoci(func=iden,file="input.txt"):
+    return func(open(file,"r").read());
 
 def fnl(func=iden):
     return [func(l) for l in aoci(lambda data: data.split("\n"))]
